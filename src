@@ -1,0 +1,185 @@
+import os
+import random
+import gzip
+import time
+import requests
+from cryptography.fernet import Fernet
+import qrcode
+from datetime import datetime, timedelta
+
+# Assurez-vous que le dossier existe
+os.makedirs('data', exist_ok=True)
+
+# 1. Création de 24 millions de points
+def create_points_file(file_path, num_points):
+    points = [(random.uniform(-1000, 1000), random.uniform(-1000, 1000)) for _ in range(num_points)]
+    with open(file_path, 'w') as f:
+        for point in points:
+            f.write(f"{point[0]},{point[1]}\n")
+
+create_points_file('data/points.txt', 24000000)
+
+# 2. Compression du fichier texte avec ajout d'une alarme
+def compress_file(input_file, output_file):
+    with open(input_file, 'rb') as f_in:
+        with gzip.open(output_file, 'wb') as f_out:
+            f_out.writelines(f_in)
+    # Ajout d'une alarme (message) à la fin du fichier compressé
+    with gzip.open(output_file, 'ab') as f_out:
+        f_out.write(b'\nALARM: Data compressed!\n')
+
+compress_file('data/points.txt', 'data/points.txt.gz')
+
+# 3. Simulation de la perte de données pendant la décompression
+def simulate_loss(file_path, loss_ratio, output_file):
+    with gzip.open(file_path, 'rb') as f_in:
+        data = f_in.read()
+        total_length = len(data)
+        loss_length = int(total_length * loss_ratio)
+        lost_data = data[:-loss_length]
+        with open(output_file, 'wb') as f_out:
+            f_out.write(lost_data)
+        return loss_length
+
+# Exemple de perte de 10% des données
+loss_ratio = 0.1
+loss_length = simulate_loss('data/points.txt.gz', loss_ratio, 'data/points_lost.txt')
+
+# Calcul des points décompressés
+def count_points(file_path):
+    with open(file_path, 'r') as f:
+        return len(f.readlines())
+
+decompressed_points = count_points('data/points_lost.txt')
+points_lost = 24000000 - decompressed_points
+
+# Simulation de ping avec une sortie sur 24h divisée par 24 millions
+def simulate_ping(interval, duration, output_file):
+    start_time = time.time()
+    end_time = start_time + duration
+    with open(output_file, 'w') as f_out:
+        while time.time() < end_time:
+            ping_time = datetime.now().isoformat()
+            f_out.write(f"Ping at {ping_time}\n")
+            print(f"Ping at {ping_time}")
+            time.sleep(interval)
+
+# Simulation d'un ping toutes les secondes pendant 24 heures
+ping_interval = 24 * 60 * 60 / 24000000  # Intervalle en secondes
+simulate_ping(ping_interval, 24 * 60 * 60, 'data/ping_log.txt')
+
+# Chiffrement des données
+def encrypt_data(data):
+    key = Fernet.generate_key()
+    cipher_suite = Fernet(key)
+    encrypted_data = cipher_suite.encrypt(data.encode())
+    return key, encrypted_data
+
+data = f"Points perdus: {points_lost}"
+key, encrypted_data = encrypt_data(data)
+
+# Affichage des données chiffrées
+print("Données chiffrées: ", encrypted_data)
+
+# Envoi des données à un point source sur le web
+def send_data(url, encrypted_data):
+    response = requests.post(url, data={'encrypted_data': encrypted_data})
+    return response
+
+response = send_data('https://example.com/receive_data', encrypted_data)
+print("Réponse du serveur: ", response.text)
+
+# Décryptage des envois de ping avec un nombre en facteur de mot de passe à double identificateur
+def decrypt_data(key, encrypted_data):
+    cipher_suite = Fernet(key)
+    decrypted_data = cipher_suite.decrypt(encrypted_data).decode()
+    return decrypted_data
+
+decrypted_data = decrypt_data(key, encrypted_data)
+print("Données déchiffrées: ", decrypted_data)
+
+# Synchronisation des deux outputs complémentaires
+def synchronize_outputs(file1, file2):
+    with open(file1, 'r') as f1, open(file2, 'r') as f2:
+        data1 = f1.readlines()
+        data2 = f2.readlines()
+    return data1, data2
+
+# Simulation de la synchronisation
+output1 = 'data/ping_log.txt'
+output2 = 'data/points_lost.txt'
+data1, data2 = synchronize_outputs(output1, output2)
+
+# Ouverture de l'accès au niveau 3 de sécurité avec un code QR électronique
+def create_qr_code(data, output_file):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+    img = qr.make_image(fill='black', back_color='white')
+    img.save(output_file)
+
+create_qr_code(decrypted_data, 'data/qr_code.png')
+
+# Expression syndicale de forme algébrique créant un mot en deux alphabets différents
+def algebraic_expression(word1, word2):
+    expression = f"({word1} + {word2}) * {word1} - {word2}"
+    return expression
+
+word1 = "alpha"
+word2 = "beta"
+expression = algebraic_expression(word1, word2)
+print("Expression algébrique: ", expression)
+
+# Traduction de l'expression algébrique en deux alphabets différents
+def translate_to_alphabet(expression, alphabet):
+    translation = ''.join(alphabet[ord(char) % len(alphabet)] if char.isalpha() else char for char in expression)
+    return translation
+
+alphabet1 = 'abcdefghijklmnopqrstuvwxyz'
+alphabet2 = 'zyxwvutsrqponmlkjihgfedcba'
+translated_expression1 = translate_to_alphabet(expression, alphabet1)
+translated_expression2 = translate_to_alphabet(expression, alphabet2)
+print("Traduction en alphabet 1: ", translated_expression1)
+print("Traduction en alphabet 2: ", translated_expression2)
+
+# Création d'un fichier texte avec les traductions
+with open('data/translated_expressions.txt', 'w') as f:
+    f.write(f"Expression: {expression}\n")
+    f.write(f"Traduction en alphabet 1: {translated_expression1}\n")
+    f.write(f"Traduction en alphabet 2: {translated_expression2}\n")
+    
+# Création d'un fichier texte avec les traductions
+with open('data/translated_expressions.txt', 'w') as f:
+    f.write(f"Expression: {expression}\n")
+    f.write(f"Traduction en alphabet 1: {translated_expression1}\n")
+    f.write(f"Traduction en alphabet 2: {translated_expression2}\n")
+    
+# Création d'un fichier texte avec les traductions
+with open('data/translated_expressions.txt', 'w') as f:
+    f.write(f"Expression: {expression}\n")
+    f.write(f"Traduction en alphabet 1: {translated_expression1}\n")
+    f.write(f"Traduction en alphabet 2: {translated_expression2}\n")
+    
+# Création d'un fichier texte avec les traductions
+with open('data/translated_expressions.txt', 'w') as f:
+    f.write(f"Expression: {expression}\n")
+    f.write(f"Traduction en alphabet 1: {translated_expression1}\n")
+    f.write(f"Traduction en alphabet 2: {translated_expression2}\n")
+    
+# Création d'un fichier texte avec les traductions
+with open('data/translated_expressions.txt', 'w') as f:
+    f.write(f"Expression: {expression}\n")
+    f.write(f"Traduction en alphabet 1: {translated_expression1}\n")
+    f.write(f"Traduction en alphabet 2: {translated_expression2}\n")
+    
+# Création d'un fichier texte avec les traductions
+with open('data/translated_expressions.txt', 'w') as f:
+    f.write(f"Expression: {expression}\n")
+    f.write(f"Traduction en alphabet 1: {translated_expression1}\n")
+    f.write(f"Traduction en alphabet 2: {translated_expression2}\n")
+    
