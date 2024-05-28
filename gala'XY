@@ -134,3 +134,14 @@ if __name__ == "__main__":
     # N'oubliez pas de leur envoyer le contrat NFT pour qu'ils puissent vérifier la propriété de l'oeuvre.
     # Vous pouvez également leur envoyer le lien vers Etherscan pour qu'ils puissent vérifier la transaction.
     # Félicitations pour votre premier NFT! 🎉
+    
+    # Pour aller plus loin, vous pouvez ajouter des métadonnées à votre NFT, comme le titre, la description, l'auteur, etc.
+    # Vous pouvez également ajouter une licence d'utilisation, un lien vers votre portfolio, etc.
+    # Vous pouvez aussi ajouter des fonctionnalités supplémentaires, comme la gravure, la fusion de plusieurs NFT, etc.
+    # Les possibilités sont infinies, alors amusez-vous bien! 
+    # 😊
+    # Here you can add any additional code or functionality you want to include.
+    # For example, you can add metadata to your NFT, such as title, description, author, etc.
+    # You can also add a usage license, a link to your portfolio, etc.
+    # Additionally, you can implement additional features like engraving, merging multiple NFTs, etc.
+    # The possibilities are endless, so have fun exploring and expanding your NFT project!
