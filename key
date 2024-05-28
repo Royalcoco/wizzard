@@ -1,0 +1,193 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import numpy as np
+import qrcode
+import cv2
+import hashlib
+import os
+import matplotlib.pyplot as plt
+
+# Create a simple satellite image in orbit
+
+# Create a figure
+fig, ax = plt.subplots(figsize=(8, 8))
+
+# Draw Earth
+earth = plt.Circle((0.5, 0.5), 0.4, color='blue', label='Earth')
+ax.add_artist(earth)
+
+# Draw Satellite
+satellite = plt.Rectangle((0.7, 0.7), 0.05, 0.02, color='grey', label='Satellite')
+ax.add_artist(satellite)
+
+# Draw Satellite Solar Panels
+solar_panel1 = plt.Rectangle((0.66, 0.715), 0.02, 0.01, color='orange')
+solar_panel2 = plt.Rectangle((0.79, 0.715), 0.02, 0.01, color='orange')
+ax.add_artist(solar_panel1)
+ax.add_artist(solar_panel2)
+
+# Draw Orbit
+theta = np.linspace(0, 2*np.pi, 100)
+x = 0.5 + 0.45 * np.cos(theta)
+y = 0.5 + 0.45 * np.sin(theta)
+ax.plot(x, y, linestyle='--', color='white', label='Orbit')
+
+# Set background color to black to represent space
+ax.set_facecolor('black')
+
+# Set limits and aspect ratio
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.set_aspect('equal')
+
+# Add legend
+ax.legend(loc='upper left', fontsize='small', facecolor='black', framealpha=0.5)
+
+# Hide axes
+ax.axis('off')
+
+# Show the plot
+plt.show()
+
+# Load the NFT image
+nft_image = plt.imread('path_to_nft_image.png')
+
+# Decompose the image into pixels
+pixels = np.array(nft_image)
+
+# Apply image smoothing
+smoothed_pixels = apply_smoothing(pixels)
+
+# Create a figure
+fig, ax = plt.subplots(figsize=(8, 8))
+
+# Draw the panoramic view of the NFT image
+ax.imshow(smoothed_pixels)
+
+# Add additional code to connect to Ethereum blockchain and mine new crypto named "zeta"
+
+# Set background color to black to represent space
+ax.set_facecolor('black')
+
+# Set limits and aspect ratio
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.set_aspect('equal')
+
+# Hide axes
+ax.axis('off')
+
+# Show the plot
+plt.show()
+# Save the image to a locked folder
+locked_folder = "/path/to/locked/folder"
+image_path = locked_folder + "/nft_image.png"
+plt.imsave(image_path, smoothed_pixels)
+
+# Generate a QR code for the locked folder
+qr_code = qrcode.make(locked_folder)
+qr_code_path = locked_folder + "/qr_code.png"
+qr_code.save(qr_code_path)
+
+# Open the NFT image with a fading effect on an animated QR code
+
+# Load the animated QR code frames
+frames = []
+for i in range(10):
+    frame_path = f"animated_qr_code/frame_{i}.png"
+    frame = cv2.imread(frame_path)
+    frames.append(frame)
+
+# Create a video writer to save the fading effect
+video_path = locked_folder + "/fading_effect.mp4"
+video_writer = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*"mp4v"), 30, (512, 512))
+
+# Apply the fading effect on the NFT image
+for frame in frames:
+    alpha = 0.1  # Adjust the alpha value for the desired fading effect
+    blended_frame = cv2.addWeighted(smoothed_pixels, alpha, frame, 1 - alpha, 0)
+    video_writer.write(blended_frame)
+
+# Release the video writer
+video_writer.release()
+
+# Encode the number of mining products in a new QR code
+mining_products = 100  # Replace with the actual number of mining products
+mining_qr_code = qrcode.make(str(mining_products))
+mining_qr_code_path = locked_folder + "/mining_qr_code.png"
+mining_qr_code.save(mining_qr_code_path)
+
+# Display the final NFT image with the fading effect and the mining QR code
+final_image = cv2.imread(video_path)
+final_image = cv2.cvtColor(final_image, cv2.COLOR_BGR2RGB)
+plt.imshow(final_image)
+plt.axis('off')
+plt.show()
+
+# Display the mining QR code
+mining_qr_code_image = plt.imread(mining_qr_code_path)
+plt.imshow(mining_qr_code_image)
+plt.axis('off')
+plt.show()
+
+# Print the number of mining products
+print(f"Number of mining products: {mining_products}")
+
+# Print the path to the locked folder
+print(f"Locked folder path: {locked_folder}")
+
+# Print the path to the final NFT image
+print(f"Final NFT image path: {image_path}")
+
+# Print the path to the fading effect video
+print(f"Fading effect video path: {video_path}")
+
+# Print the path to the mining QR code
+print(f"Mining QR code path: {mining_qr_code_path}")
+
+# Print the path to the animated QR code frames
+print("Animated QR code frames path:")
+for i in range(10):
+    print(f"Frame {i}: animated_qr_code/frame_{i}.png")
+    
+# Print the path to the NFT image
+print(f"NFT image path: path_to_nft_image.png")
+
+# Print the path to the final NFT image
+print(f"Final NFT image path: {image_path}")
+
+# Print the path to the locked folder
+print(f"Locked folder path: {locked_folder}")
+
+# Print the path to the mining QR code
+print(f"Mining QR code path: {mining_qr_code_path}")
+# Generate a password hash
+password = "my_password"
+password_hash = hashlib.sha256(password.encode()).hexdigest()
+
+# Generate a cache key based on the holder's IP address
+holder_ip = "192.168.0.1"
+cache_key = hashlib.sha256(holder_ip.encode()).hexdigest()
+
+# Check if the cache key is divisible by the address IP
+if int(cache_key, 16) % int(holder_ip.replace(".", "")) != 0:
+    raise ValueError("Cache key is not divisible by the holder's IP address")
+
+# Open the output file in write mode
+output_file = open("output.txt", "w")
+
+# Write the password hash and cache key to the output file
+output_file.write(f"Password Hash: {password_hash}\n")
+output_file.write(f"Cache Key: {cache_key}\n")
+
+# Close the output file
+output_file.close()
+
+# Encrypt the output file using the password hash
+os.system(f"gpg --passphrase {password} --output output.txt.gpg --symmetric output.txt")
+
+# Print the path to the encrypted output file
+print("Encrypted output file path: output.txt.gpg")
+
+# Print the password hash
+print(f"Password Hash: {password_hash}")
