@@ -1,0 +1,136 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import moviepy.editor as mpy
+
+import qrcode
+
+from web3 import Web3
+import json
+
+def generate_galaxy_image():
+    fig, ax = plt.subplots(figsize=(10, 10), subplot_kw={'projection': 'polar'})
+    ax.set_facecolor('black')
+    ax.grid(False)
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    r = np.random.rand(1000)
+    theta = 2 * np.pi * np.random.rand(1000)
+    ax.scatter(theta, r, c='white', s=np.random.rand(1000)*5)
+    
+    plt.close(fig)
+    return fig, ax
+
+def create_galaxy_rotation_video(output_path, duration=10, fps=24):
+    fig, ax = generate_galaxy_image()
+
+    def update(frame):
+        ax.clear()
+        ax.set_facecolor('black')
+        ax.grid(False)
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+        r = np.random.rand(1000)
+        theta = 2 * np.pi * np.random.rand(1000) + frame * np.pi / 180
+        ax.scatter(theta, r, c='white', s=np.random.rand(1000)*5)
+
+    anim = FuncAnimation(fig, update, frames=np.arange(0, 360, 1), interval=1000/fps)
+    anim.save(output_path, writer='ffmpeg', fps=fps)
+
+create_galaxy_rotation_video("galaxy_rotation.mp4")
+
+
+def create_qr_code(data, filename='qr_code.png'):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+    img = qr.make_image(fill='black', back_color='white')
+    img.save(filename)
+    return filename
+
+video_url = "https://your.ipfs.gateway/galaxy_rotation.mp4"
+qr_code_path = create_qr_code(video_url)
+print(f"QR code saved to {qr_code_path}")
+
+def create_galaxy_rotation_gif(output_path, duration=10, fps=24):
+    fig, ax = generate_galaxy_image()
+
+    def update(frame):
+        ax.clear()
+        ax.set_facecolor('black')
+        ax.grid(False)
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+        r = np.random.rand(1000)
+        theta = 2 * np.pi * np.random.rand(1000) + frame * np.pi / 180
+        ax.scatter(theta, r, c='white', s=np.random.rand(1000)*5)
+
+    anim = FuncAnimation(fig, update, frames=np.arange(0, 360, 1), interval=1000/fps)
+    anim.save(output_path, writer='imagemagick', fps=fps)
+
+
+def upload_to_ipfs(file_path):
+    # Exemple de code pour télécharger le fichier sur IPFS
+    # Vous pouvez utiliser l'API Pinata, Infura, ou autre service IPFS.
+    pass
+
+def mint_nft(video_path, contract_address, private_key, account_address):
+    ipfs_url = upload_to_ipfs(video_path)
+    
+    # Connexion à Ethereum
+    web3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'))
+
+    with open('abi.json') as f:
+        contract_abi = json.load(f)
+
+    contract = web3.eth.contract(address=contract_address, abi=contract_abi)
+
+    nonce = web3.eth.getTransactionCount(account_address)
+    
+    transaction = contract.functions.mint(account_address, ipfs_url).buildTransaction({
+        'chainId': 1,
+        'gas': 2000000,
+        'gasPrice': web3.toWei('50', 'gwei'),
+        'nonce': nonce,
+    })
+
+    signed_txn = web3.eth.account.signTransaction(transaction, private_key=private_key)
+    tx_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
+    
+    return tx_hash
+
+if __name__ == "__main__":
+    video_path = "galaxy_rotation.mp4"
+    contract_address = "0xYourContractAddress"
+    private_key = "0xYourPrivateKey"
+    account_address = "0xYourAccountAddress"
+
+    tx_hash = mint_nft(video_path, contract_address, private_key, account_address)
+    print(f"Transaction hash: {tx_hash.hex()}")
+
+    create_galaxy_rotation_gif("galaxy_rotation.gif")
+    print("GIF saved to galaxy_rotation.gif")
+    
+    video = mpy.VideoFileClip("galaxy_rotation.mp4")
+    gif = mpy.ImageClip("galaxy_rotation.gif")
+    final_clip = mpy.concatenate_videoclips([video, gif.set_duration(video.duration)])
+    final_clip.write_videofile("galaxy_rotation_with_gif.mp4", codec="libx264", fps=24)
+    print("Final video saved to galaxy_rotation_with_gif.mp4")
+    
+    qr_code_path = create_qr_code("https://your.ipfs.gateway/galaxy_rotation_with_gif.mp4")
+    print(f"QR code saved to {qr_code_path}")
+    
+    print("All done!")
+    
+    # Vous pouvez maintenant envoyer le QR code à vos acheteurs pour qu'ils puissent télécharger leur NFT.
+    # N'oubliez pas de leur envoyer le contrat NFT pour qu'ils puissent vérifier la propriété de l'oeuvre.
+    # Vous pouvez également leur envoyer le lien vers Etherscan pour qu'ils puissent vérifier la transaction.
+    # Félicitations pour votre premier NFT! 🎉
