@@ -417,7 +417,7 @@ ge received by ping: ")
     print(f"Total time taken: {end_time - start_time} seconds")
     
 if __name__ == "__main__":
-    main()
+    main() # main function call from main function to run the code.
 
 # Générer des points de données aléatoires
 data_points = [random.randint(0, 1000) for _ in range(1100)]
