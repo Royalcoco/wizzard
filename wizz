@@ -1,0 +1,251 @@
+import nltk
+import random
+import string
+import requests
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from bs4 import BeautifulSoup
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+# Téléchargement des ressources nécessaires pour nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+
+class ChatBot:
+    def __init__(self, name):
+        self.name = name
+        self.word_dict = {}
+        self.stop_words = set(stopwords.words('english'))
+        self.known_phrases = []
+
+    def learn_words(self, sentence):
+        words = word_tokenize(sentence)
+        words = [word.lower() for word in words if word.isalpha() and word not in self.stop_words]
+        self.known_phrases.append(sentence)
+        for word in words:
+            if word not in self.word_dict:
+                self.word_dict[word] = 1
+            else:
+                self.word_dict[word] += 1
+
+    def generate_response(self):
+        if not self.word_dict:
+            return "I need to learn more words first."
+        
+        # Génération d'une phrase en utilisant des mots connus
+        words = list(self.word_dict.keys())
+        sentence_length = random.randint(5, 15)  # Longueur de la phrase aléatoire
+        sentence = ' '.join(random.choices(words, k=sentence_length))
+        return sentence.capitalize() + '.'
+
+    def generate_question(self):
+        if not self.word_dict:
+            return "I need to learn more words first."
+        
+        # Choisir un mot fréquent et formuler une question de manière contextuelle
+        common_word = max(self.word_dict, key=self.word_dict.get)
+        questions = [
+            f"Can you tell me more about {common_word}?",
+            f"What do you think of when you hear the word {common_word}?",
+            f"How often do you use the word {common_word}?"
+        ]
+        return random.choice(questions)
+
+    def interact(self, input_sentence):
+        self.learn_words(input_sentence)
+        response = self.generate_response()
+        question = self.generate_question()
+        return response, question
+
+    def search_web(self, query):
+        search_url = f"https://www.google.com/search?q={query}"
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(search_url, headers=headers)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Extraire les snippets de recherche
+        snippets = soup.find_all('span', {'class': 'aCOpRe'})
+        phrases = [snippet.get_text() for snippet in snippets]
+        return phrases
+
+    def extract_keywords(self, phrases):
+        keywords = []
+        for phrase in phrases:
+            words = word_tokenize(phrase)
+            words = [word.lower() for word in words if word.isalpha() and word not in self.stop_words]
+            keywords.extend(words)
+        return keywords
+
+    def generate_ml_code(self, keywords):
+        if "classification" in keywords or "classify" in keywords:
+            code = """
+# Code de classification avec RandomForest
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Charger le jeu de données iris
+data = load_iris()
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.3, random_state=42)
+
+# Entraîner le modèle
+clf = RandomForestClassifier(n_estimators=100, random_state=42)
+clf.fit(X_train, y_train)
+
+# Prédictions
+y_pred = clf.predict(X_test)
+
+# Évaluer le modèle
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+"""
+        else:
+            code = "# Pas assez de données pour générer du code ML pertinent."
+        return code
+
+# Création de deux bots de chat
+bot1 = ChatBot("BotAlpha")
+bot2 = ChatBot("BotBeta")
+
+# Exemples d'apprentissage des mots par les bots et interaction
+input_sentences = [
+    "Hello, how are you doing today? I hope you are having a great day!",
+    "Greetings! What are your plans for today? It's a beautiful day, isn't it?"
+]
+
+for sentence in input_sentences:
+    response1, question1 = bot1.interact(sentence)
+    print(f"{bot1.name}: {response1}")
+    print(f"{bot1.name}: {question1}")
+    
+    response2, question2 = bot2.interact(sentence)
+    print(f"{bot2.name}: {response2}")
+    print(f"{bot2.name}: {question2}")
+
+# Interaction continue entre les bots
+for _ in range(3):
+    sentence_from_bot1 = bot1.generate_response()
+    print(f"{bot1.name}: {sentence_from_bot1}")
+    bot2.learn_words(sentence_from_bot1)
+    
+    sentence_from_bot2 = bot2.generate_response()
+    print(f"{bot2.name}: {sentence_from_bot2}")
+    bot1.learn_words(sentence_from_bot2)
+    
+    question_from_bot1 = bot1.generate_question()
+    print(f"{bot1.name}: {question_from_bot1}")
+    search_results1 = bot1.search_web(question_from_bot1)
+    keywords1 = bot1.extract_keywords(search_results1)
+    ml_code1 = bot1.generate_ml_code(keywords1)
+    print(f"{bot1.name} ML Code:\n{ml_code1}")
+    
+    question_from_bot2 = bot2.generate_question()
+    print(f"{bot2.name}: {question_from_bot2}")
+    search_results2 = bot2.search_web(question_from_bot2)
+    keywords2 = bot2.extract_keywords(search_results2)
+    ml_code2 = bot2.generate_ml_code(keywords2)
+    print(f"{bot2.name} ML Code:\n{ml_code2}")
+
+# Exemple de classification avec RandomForest
+data = load_iris()
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.3, random_state=42)
+clf = RandomForestClassifier(n_estimators=100, random_state=42)
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"Accuracy: {accuracy:.2f}")
+
+# Exemple de classification avec RandomForest
+data = load_iris()
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.3, random_state=42)
+clf = RandomForestClassifier(n_estimators=100, random_state=42)
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"Accuracy: {accuracy:.2f}")
+
+# Classification automatique par dossier des inputs avec des outputs corrects et des dossiers créés apportant des points de minage pour Ethereum
+
+# Définition des inputs et outputs
+inputs = [
+    "Hello, how are you doing today?",
+    "What are your plans for today?",
+    "Can you tell me more about machine learning?",
+    "How often do you use Python?",
+    "What is your favorite programming language?",
+    "Tell me about your hobbies.",
+    "What do you think of artificial intelligence?",
+    "Can you recommend a good book to read?",
+    "How do you stay motivated?",
+    "What is the meaning of life?"
+]
+outputs = [
+    "I'm doing well, thank you!",
+    "I don't have any plans yet.",
+    "Machine learning is a field of study that focuses on developing algorithms and models that allow computers to learn and make predictions or decisions without being explicitly programmed.",
+    "I use Python on a daily basis.",
+    "My favorite programming language is Python.",
+    "I enjoy reading and playing video games.",
+    "Artificial intelligence is a fascinating field that has the potential to revolutionize many industries.",
+    "I recommend reading 'Sapiens: A Brief History of Humankind' by Yuval Noah Harari.",
+    "I stay motivated by setting goals and celebrating small achievements.",
+    "The meaning of life is subjective and can vary from person to person."
+]
+
+# Création des dossiers pour les outputs
+for output in outputs:
+    folder_name = output.replace(" ", "_").lower()
+    os.makedirs(folder_name, exist_ok=True)
+
+# Classification des inputs dans les dossiers correspondants
+for input_sentence, output in zip(inputs, outputs):
+    folder_name = output.replace(" ", "_").lower()
+    file_name = f"{folder_name}/{input_sentence.replace(' ', '_').lower()}.txt"
+    with open(file_name, "w") as file:
+        file.write(input_sentence)
+
+# Ajout des points de minage pour Ethereum
+ethereum_points = len(inputs) * 10
+
+print(f"Classification automatique terminée. Vous avez gagné {ethereum_points} points de minage pour Ethereum.")
+
+# Classification automatique par dossier des inputs avec des outputs corrects et des dossiers créés apportant des points de minage pour Ethereum
+
+# Définition des inputs et outputs
+inputs = [
+    "Hello, how are you doing today?",
+    "What are your plans for today?",
+    "Can you tell me more about machine learning?",
+    "How often do you use Python?",
+    "What is your favorite programming language?",
+    "Tell me about your hobbies.",
+    "What do you think of artificial intelligence?",
+    "Can you recommend a good book to read?",
+    "How do you stay motivated?",
+    "What is the meaning of life?"
+]
+
+outputs = [
+    "I'm doing well, thank you!",
+    "I don't have any plans yet.",
+    "Machine learning is a field of study that focuses on developing algorithms and models that allow computers to learn and make predictions or decisions without being explicitly programmed.",
+    "I use Python on a daily basis.",
+    "My favorite programming language is Python.",
+    "I enjoy reading and playing video games.",
+    "Artificial intelligence is a fascinating field that has the potential to revolutionize many industries.",
+    "I recommend reading 'Sapiens: A Brief History of Humankind' by Yuval Noah Harari.",
+    "I stay motivated by setting goals and celebrating small achievements.",
+    "The meaning of life is subjective and can vary from person to person."
+]
+
+# Création des dossiers pour les outputs
+for output in outputs:
+    folder_name = output.replace(" ", "_").lower()
+    os.makedirs(folder_name, exist_ok=True)
+    
+# Classification des inputs dans les dossiers correspondants
