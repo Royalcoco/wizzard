@@ -1,0 +1,146 @@
+import cv2
+from PIL import Image
+import cv2
+from PIL import Image
+import time
+import qrcode
+import shutil
+
+# Load the image
+image_path = "ZGrEIsb5AKbmfUYnU0Pu.jpg"
+image = Image.open(image_path)
+
+# Convert the image to a video with animations
+video_path = "nft_animation.mp4"
+video_writer = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*"mp4v"), 30, image.size)
+
+# Add animations to the video
+# You can use OpenCV functions to apply various effects, transitions, or animations to the frames
+
+# Save the video
+video_writer.release()
+
+# Load the image
+image_path = "ZGrEIsb5AKbmfUYnU0Pu.jpg"
+image = Image.open(image_path)
+
+# Convert the image to a video with animations
+video_path = "nft_animation.mp4"
+video_writer = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*"mp4v"), 30, image.size)
+
+# Add animations to the video
+# You can use OpenCV functions to apply various effects, transitions, or animations to the frames
+
+# Simulate mining time for the NFT
+mining_time = 10  # Replace with the actual mining time in seconds
+time.sleep(mining_time)
+
+# Sign the NFT with a blockchain
+blockchain_signature = "blockchain_signature"  # Replace with the actual blockchain signature
+
+# Calculate the miner's reward
+miner_reward = 0.04  # 4% of the NFT value
+num_miners = 5  # Number of miners
+nft_value = 100  # Replace with the actual NFT value
+miner_reward_amount = nft_value * miner_reward / num_miners
+
+# Complexify the NFT with 7 steps
+for i in range(7):
+    # Apply complexification step to the NFT
+    # ...
+
+# Save the video
+video_writer.release()
+
+# Save the NFT information with its GFT points
+nft_info = {
+    "nft_value": nft_value,
+    "miner_reward_amount": miner_reward_amount,
+    "blockchain_signature": blockchain_signature
+}
+# Save the NFT information to a file or database
+# ...
+
+print("NFT animation created successfully!")
+print("NFT information saved successfully!")
+
+# Load the image
+image_path = "ZGrEIsb5AKbmfUYnU0Pu.jpg"
+image = Image.open(image_path)
+
+# Convert the image to a video with animations
+video_path = "nft_animation.mp4"
+video_writer = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*"mp4v"), 30, image.size)
+
+# Add animations to the video
+# You can use OpenCV functions to apply various effects, transitions, or animations to the frames
+
+# Simulate mining time for the NFT
+mining_time = 10  # Replace with the actual mining time in seconds
+time.sleep(mining_time)
+
+# Generate QR code with NFT information
+
+# Define NFT information
+nft_info = {
+    "nft_value": nft_value,
+    "miner_reward_amount": miner_reward_amount,
+    "blockchain_signature": blockchain_signature
+}
+
+# Convert NFT information to string
+nft_info_str = str(nft_info)
+
+# Generate QR code
+qr_code = qrcode.make(nft_info_str)
+
+# Save QR code image
+qr_code_path = "nft_qr_code.png"
+qr_code.save(qr_code_path)
+
+# Check if NFT value is greater than or equal to 1000
+if nft_value >= 1000:
+    # Display riddles
+    riddles = [
+        "What has keys but can't open locks? A piano!",
+        "What has a heart that doesn't beat? A artichoke!",
+        "What has a face and two hands but no arms or legs? A clock!"
+    ]
+    for riddle in riddles:
+        print(riddle)
+else:
+    # Display NFT information
+    print("NFT information:")
+    print(nft_info)
+    
+    # Compress the video file
+
+    compressed_video_path = "compressed_nft_animation.mp4"
+    shutil.copy(video_path, compressed_video_path)
+
+    # Sell the NFT for cryptocurrency on the Ethereum blockchain
+    # Implement your code here to interact with the Ethereum blockchain and sell the NFT
+    # ...
+
+    print("NFT sold successfully!")
+    print("NFT information saved successfully!")
+    
+    # Read the QR code image
+    qr_code_image = cv2.imread(qr_code_path)
+
+    # Process the QR code image to extract the information
+    # Implement your code here to process the QR code image and extract the information
+    # ...
+
+    # Use the extracted information in the game logic
+    # Implement your code here to use the extracted information in the game logic
+    # ...
+    
+    # Display the QR code image
+    cv2.imshow("NFT QR Code", qr_code_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
+    # Load the image
+image_path = "ZGrEIsb5AKbmfUYnU0Pu.jpg"
+image = Image.open(image_path)
